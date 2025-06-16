@@ -1,61 +1,75 @@
-import React from "react";
-
-const products = [
-  {
-    id: 1,
-    title: "Product One",
-    price: "$49",
-    image:
-      "https://plus.unsplash.com/premium_photo-1675186049366-64a655f8f537?q=80&w=1374&auto=format&fit=crop",
-  },
-  {
-    id: 2,
-    title: "Product Two",
-    price: "$69",
-    image:
-      "https://images.unsplash.com/photo-1643903032976-8c0d0556a8ea?q=80&w=1471&auto=format&fit=crop",
-  },
-  {
-    id: 3,
-    title: "Product Three",
-    price: "$99",
-    image:
-      "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?q=80&w=1396&auto=format&fit=crop",
-  },
-  {
-    id: 4,
-    title: "Product Four",
-    price: "$39",
-    image:
-      "https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=1412&auto=format&fit=crop",
-  },
-];
+import React, { useEffect, useState } from "react";
+import { getTrendingProducts } from "../api/ProductApi";
+import { API } from "../constants";
+import { Link } from "react-router-dom";
+import { FiShoppingCart } from "react-icons/fi";
 
 const TrendingProducts = () => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getTrendingProducts()
+      .then((data) => {
+        if (data && !data.error) {
+          setProducts(data);
+        } else {
+          console.error("Error fetching trending products:", data.error);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching trending products:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
   return (
-    <section className="px-6 py-12 bg-gray-50">
+    <section className="px-6 py-16  text-white">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-2xl font-semibold text-slate-800 mb-8 text-center">
-          Trending Products
+        <h2 className="text-3xl font-bold mb-12 text-center tracking-tight">
+          🔥 Trending Products
         </h2>
-        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {products.map((product) => (
-            <div
-              key={product.id}
-              className="bg-white rounded-lg shadow p-4 hover:shadow-lg transition"
-            >
-              <img
-                src={product.image}
-                alt={product.title}
-                className="w-full h-48 object-cover rounded mb-4"
-              />
-              <h3 className="text-lg font-semibold text-slate-700">
-                {product.title}
-              </h3>
-              <p className="text-indigo-600 font-medium">{product.price}</p>
-            </div>
-          ))}
-        </div>
+
+        {loading ? (
+          <p className="text-center text-gray-300">Loading...</p>
+        ) : (
+          <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {products.map((product) => (
+              <div
+                key={product._id}
+                className="bg-slate-700 rounded-2xl shadow-lg overflow-hidden hover:scale-[1.02] transition-transform duration-300"
+              >
+                <img
+                  src={`${API}/${product.image}`}
+                  alt={product.title}
+                  className="w-full h-56 object-cover"
+                />
+                <div className="p-5">
+                  <h3 className="text-xl font-semibold mb-2">
+                    {product.title}
+                  </h3>
+                  <p className="text-indigo-400 font-bold text-lg mb-3">
+                    Rs.{product.price}
+                  </p>
+
+                  <div className="flex justify-between items-center">
+                    <Link
+                      to={`/product/${product._id}`}
+                      className="text-sm px-3 py-1 bg-indigo-500 text-white rounded-full hover:bg-indigo-600 transition"
+                    >
+                      View Product
+                    </Link>
+                    <button className="text-white bg-indigo-600 hover:bg-indigo-700 p-2 rounded-full">
+                      <FiShoppingCart size={18} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

@@ -7,6 +7,7 @@ const {
   deleteProduct,
   getFilteredProducts,
   getRelatedProducts,
+  getTrendingProducts,
 } = require("../controller/productController");
 const { isAdmin } = require("../controller/userController");
 const upload = require("../middleware/fileUpload");
@@ -43,5 +44,6 @@ router.get("/getProductByCategoty/:categoryId", getProductByCategory);
 
 router.post("/getFilteredProducts", getFilteredProducts);
 router.get("/getrelatedproducts/:id", getRelatedProducts);
+router.get("/getTrendingProducts", getTrendingProducts);
 
 module.exports = router;

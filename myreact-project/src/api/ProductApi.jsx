@@ -61,3 +61,9 @@ export const getRelatedProducts = (id) => {
     .then((response) => response.json())
     .catch((error) => console.log(error));
 };
+
+export const getTrendingProducts = () => {
+  return fetch(`${API}/getTrendingProducts`)
+    .then((response) => response.json())
+    .catch((error) => console.log(error));
+};

@@ -2,6 +2,7 @@ const { get } = require("mongoose");
 const ProductModel = require("../models/productModel");
 
 const fs = require("fs");
+const orderModel = require("../models/orderModel");
 
 exports.addProduct = async (req, res) => {
   let productToAdd = await ProductModel.create({
@@ -137,4 +138,59 @@ exports.getRelatedProducts = async (req, res) => {
     return res.status(400).json({ error: "Something went wrong" });
   }
   res.send(products);
+};
+
+exports.getTrendingProducts = async (req, res) => {
+  try {
+    const trendingProducts = await orderModel.aggregate([
+      // Join orderItems array
+      {
+        $lookup: {
+          from: "orderitems", // collection name (lowercase plural by MongoDB)
+          localField: "orderItems",
+          foreignField: "_id",
+          as: "orderItemsDetails",
+        },
+      },
+      // Unwind the order items
+      { $unwind: "$orderItemsDetails" },
+
+      // Group by product and count quantity
+      {
+        $group: {
+          _id: "$orderItemsDetails.product",
+          totalSold: { $sum: "$orderItemsDetails.quantity" },
+        },
+      },
+      { $sort: { totalSold: -1 } },
+      { $limit: 8 },
+
+      // Lookup product details
+      {
+        $lookup: {
+          from: "products",
+          localField: "_id",
+          foreignField: "_id",
+          as: "productDetails",
+        },
+      },
+      { $unwind: "$productDetails" },
+
+      // Final projection
+      {
+        $project: {
+          _id: "$productDetails._id",
+          title: "$productDetails.product_name",
+          price: "$productDetails.product_price",
+          image: "$productDetails.product_image",
+          totalSold: 1,
+        },
+      },
+    ]);
+
+    res.status(200).json(trendingProducts);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch trending products" });
+  }
 };
