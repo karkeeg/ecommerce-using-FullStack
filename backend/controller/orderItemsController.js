@@ -102,24 +102,27 @@ exports.getAllOrderByUser = async (req, res) => {
 };
 
 exports.deleteOrders = async (req, res) => {
-  OrderModel.findByIdAndDelete(req.params.id)
-    .then((deletedOrder) => {
-      if (!deletedOrder) {
-        return res.status(400).json({ error: "Something went wrong!" });
-      } else {
-        deletedOrder.orderItems.map((orderItem) => {
-          OrderItemsModel.findByIdAndDelete(orderItem).then((orderItem) => {
-            if (!orderItem) {
-              return res.status(400).json({ error: "Something went wrong" });
-            }
-          });
-          res.send({ message: "Order Deleted Successfully" });
-        });
-      }
-    })
-    .catch((err) => {
-      return res.status(400).json({ error: "Something went wrong" });
-    });
+  try {
+    const deletedOrder = await OrderModel.findByIdAndDelete(req.params.id);
+
+    if (!deletedOrder) {
+      return res.status(400).json({ error: "Order not found" });
+    }
+
+    // Delete all associated orderItems
+    for (const orderItemId of deletedOrder.orderItems) {
+      const deletedItem = await OrderItemsModel.findByIdAndDelete(orderItemId);
+      // If you want to handle missing order items, do it here
+    }
+
+    // Send response only once, after all deletions
+    return res
+      .status(200)
+      .json({ message: "Order and its items deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Server error" });
+  }
 };
 
 exports.updateOrderStatus = async (req, res) => {

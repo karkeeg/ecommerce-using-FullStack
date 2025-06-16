@@ -3,6 +3,7 @@ import {
   getAllOrders,
   updateOrderStatus,
   addneworder,
+  deleteOrder, // Import deleteOrder API call
 } from "../../api/orderApi";
 import { isAuthenticated } from "../../api/userApi";
 import {
@@ -11,9 +12,11 @@ import {
   FiCheckCircle,
   FiXCircle,
   FiRefreshCcw,
+  FiDelete,
 } from "react-icons/fi";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
+import { MdDelete, MdDeleteForever } from "react-icons/md";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -87,55 +90,35 @@ const Orders = () => {
     }
   };
 
+  // New: Handle deleting an order with confirmation
+  const handleDeleteOrder = async (orderId) => {
+    const confirmResult = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (confirmResult.isConfirmed) {
+      const res = await deleteOrder(orderId, token);
+      if (res.error) {
+        Swal.fire("Error", res.error, "error");
+      } else {
+        Swal.fire("Deleted!", "Order has been deleted.", "success");
+        // Remove deleted order from state
+        setOrders((prev) => prev.filter((order) => order._id !== orderId));
+      }
+    }
+  };
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Orders</h2>
-        <button
-          className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
-          onClick={() => setShowForm(!showForm)}
-        >
-          <FiPlus /> Add Order
-        </button>
       </div>
-
-      {showForm && (
-        <form
-          onSubmit={handleAddOrder}
-          className="bg-gray-100 p-4 rounded mb-6 grid grid-cols-1 md:grid-cols-2 gap-4"
-        >
-          {["username", "email", "phone", "street", "city", "total"].map(
-            (field) => (
-              <input
-                key={field}
-                type={field === "total" ? "number" : "text"}
-                placeholder={field[0].toUpperCase() + field.slice(1)}
-                className="border border-gray-300 rounded px-3 py-2"
-                value={newOrder[field]}
-                onChange={(e) =>
-                  setNewOrder({ ...newOrder, [field]: e.target.value })
-                }
-                required
-              />
-            )
-          )}
-          <div className="col-span-full flex justify-end gap-2">
-            <button
-              type="submit"
-              className="flex items-center gap-1 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-            >
-              <FiCheckCircle /> Save
-            </button>
-            <button
-              type="button"
-              className="flex items-center gap-1 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-              onClick={() => setShowForm(false)}
-            >
-              <FiXCircle /> Cancel
-            </button>
-          </div>
-        </form>
-      )}
 
       {loading ? (
         <div className="flex items-center space-x-2 text-gray-600">
@@ -156,6 +139,9 @@ const Orders = () => {
                 <th className="py-2 px-4 border">Total</th>
                 <th className="py-2 px-4 border">Current Status</th>
                 <th className="py-2 px-4 border">Actions</th>
+                <th className="py-2 px-4 border">
+                  <MdDeleteForever />
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -239,6 +225,15 @@ const Orders = () => {
                         );
                       }
                     )}
+                  </td>
+                  <td className="py-2 px-4 border">
+                    {/* Delete Button */}
+                    <button
+                      className="text-red-600 hover:text-red-800 transition duration-200"
+                      onClick={() => handleDeleteOrder(order._id)}
+                    >
+                      <MdDelete size={18} />
+                    </button>
                   </td>
                 </tr>
               ))}

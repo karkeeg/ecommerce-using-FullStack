@@ -59,7 +59,7 @@ export const updateOrder = async (id, token, status) => {
 
 export const deleteOrder = async (id, token) => {
   try {
-    const res = await fetch(`${API}/order/${id}`, {
+    const res = await fetch(`${API}/deleteOrder/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: token,
