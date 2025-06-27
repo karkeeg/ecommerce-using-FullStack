@@ -34,6 +34,8 @@ import Payment from "./Pages/Payment";
 import OrderSuccess from "./Pages/OrderSuccess";
 import UserProfile from "./Pages/UserProfile";
 import OrderDetails from "./Pages/admin/OrderDetails";
+import Success from "./Components/Success";
+import Failure from "./Components/Failure";
 
 const Myroutes = () => {
   return (
@@ -52,6 +54,8 @@ const Myroutes = () => {
           <Route path="/checkout" element={<CheckoutPage />} />
 
           <Route path="/payment" element={<Payment />} />
+          <Route path="/payment-success" element={<Success />} />
+          <Route path="/payment-failure" element={<Failure />} />
           <Route path="/orderSuccess" element={<OrderSuccess />} />
 
           <Route path="/service" element={<ServicesPage />} />

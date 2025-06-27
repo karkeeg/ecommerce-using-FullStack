@@ -163,7 +163,7 @@ exports.getTrendingProducts = async (req, res) => {
         },
       },
       { $sort: { totalSold: -1 } },
-      { $limit: 8 },
+      { $limit: 12 },
 
       // Lookup product details
       {
