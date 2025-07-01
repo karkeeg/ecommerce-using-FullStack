@@ -56,6 +56,7 @@ const LoginPage = () => {
         if (Number(data.user?.role) === 1) {
           navigate("/admin/dashboard");
         } else {
+          localStorage.setItem("user", JSON.stringify(data.user));
           navigate("/");
         }
       }

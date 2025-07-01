@@ -31,9 +31,12 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { API } from "../constants";
 import { verifyEsewaPayment } from "../api/paymentApi";
+import { useSelector } from "react-redux";
 
 const OrderSuccess = () => {
   const location = useLocation();
+
+  
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -47,7 +50,7 @@ const OrderSuccess = () => {
     console.log("transaction_uuid:", transaction_uuid);
 
     verifyEsewaPayment(transaction_uuid, amount).then((data) => {
-      console.log(data);
+      // console.log(data);
       if (data.success) {
         alert("Payment verified! Your order is placed.");
         // Proceed to clear cart, update UI, etc.
@@ -56,6 +59,7 @@ const OrderSuccess = () => {
       }
     });
   }, [location]);
+  // console.log(user);
 
   return <div>Verifying your payment...</div>;
 };

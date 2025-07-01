@@ -1,56 +1,111 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { base64Decode } from "esewajs";
-import axios from "axios";
-const Success = () => {
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
+import { useLocation, Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import Swal from "sweetalert2";
+import { verifyEsewaPayment } from "../api/paymentApi";
+import { placeOrder } from "../api/orderApi";
+import { EmptyCart } from "../Components/redux/CartActions";
+
+const OrderSuccess = () => {
   const location = useLocation();
-  // Create a new URLSearchParams object using the search string from location
-  const queryParams = new URLSearchParams(location.search);
-  const token = queryParams.get("data");
-  // Decode the JWT without verifying the signature
-  const decoded = base64Decode(token);
-  const verifyPaymentAndUpdateStatus = async () => {
-    try {
-      const response = await axios.post(
-        "http://localhost:3000/payment-status",
-        {
-          product_id: decoded.transaction_uuid,
-        }
-      );
-      if (response.status === 200) {
-        setIsLoading(false);
-        setIsSuccess(true);
-      }
-    } catch (error) {
-      setIsLoading(false);
-      console.error("Error initiating payment:", error);
-    }
-  };
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState(null);
+
+  const cart = useSelector((state) => state.cart?.cart_items || []);
+
   useEffect(() => {
-    verifyPaymentAndUpdateStatus();
-  }, []);
-  if (isLoading && !isSuccess) return <>Loading...</>;
-  if (!isLoading && !isSuccess)
+    const handlePayment = async () => {
+      const params = new URLSearchParams(location.search);
+      const transaction_uuid = params.get("transaction_uuid");
+      const rawAmount = params.get("amount");
+
+      if (!transaction_uuid || !rawAmount) {
+        setStatus("invalid");
+        return;
+      }
+
+      const [amount] = rawAmount.split("?");
+      console.log("Parsed amount:", amount);
+      console.log("transaction_uuid:", transaction_uuid);
+
+      const verifyRes = await verifyEsewaPayment(transaction_uuid, amount);
+
+      if (verifyRes.success && user) {
+        // 1. Place the order
+        const orderData = {
+          user: user._id,
+          items: cart,
+          totalAmount: parseFloat(amount),
+          paymentMethod: "eSewa",
+          transactionId: transaction_uuid,
+        };
+
+        const res = await placeOrder(orderData, user.token);
+
+        if (res.success) {
+          // 2. Empty cart
+          dispatch(EmptyCart());
+
+          setStatus("Success");
+        } else {
+          setStatus("order-failed");
+        }
+      } else {
+        setStatus("verify-failed");
+      }
+
+      setLoading(false);
+    };
+
+    handlePayment();
+  }, [location, dispatch, user, cart]);
+
+  if (loading) {
     return (
-      <>
-        <h1>Oops!..Error occurred on confirming payment</h1>
-        <h2>We will resolve it soon.</h2>
-        <button onClick={() => navigate("/")} className="go-home-button">
-          Go to Homepage
-        </button>
-      </>
+      <div className="flex flex-col items-center justify-center h-screen text-center">
+        <div className="loader mb-4"></div>
+        <p className="text-lg font-medium">Verifying your payment...</p>
+      </div>
     );
+  }
+
   return (
-    <div>
-      <h1>Payment Successful!</h1>
-      <p>Thank you for your payment. Your transaction was successful.</p>
-      <button onClick={() => navigate("/")} className="go-home-button">
-        Go to Homepage
-      </button>
+    <div className="flex flex-col items-center justify-center h-screen text-center px-4">
+      {status === "Success" && (
+        <>
+          <h2 className="text-2xl font-semibold text-green-600 mb-2">
+            🎉 Payment Verified!
+          </h2>
+          <p className="mb-4 text-gray-700">
+            Your order has been placed successfully.
+          </p>
+          <Link
+            to="/"
+            className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition"
+          >
+            Go to Homepage
+          </Link>
+        </>
+      )}
+
+      {status === "verify-failed" && (
+        <p className="text-red-600 text-lg">
+          ❌ Payment verification failed. Please contact support.
+        </p>
+      )}
+
+      {status === "order-failed" && (
+        <p className="text-red-600 text-lg">
+          ❌ Payment verified, but order could not be placed.
+        </p>
+      )}
+
+      {status === "invalid" && (
+        <p className="text-yellow-600 text-lg">⚠️ Invalid payment response.</p>
+      )}
     </div>
   );
 };
-export default Success;
+
+export default OrderSuccess;
