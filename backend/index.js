@@ -3,7 +3,7 @@ const morgan = require("morgan");
 require("dotenv").config();
 require("./database/connection");
 const cors = require("cors");
-const myrouter = require("./routes/testroute");
+
 const categoryRouter = require("./routes/categoryRoutes");
 const productRouter = require("./routes/productRoutes");
 const userRouter = require("./routes/userRoutes");
@@ -17,7 +17,6 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
 
-app.use(myrouter);
 app.use(categoryRouter);
 app.use(productRouter);
 app.use(userRouter);
