@@ -26,10 +26,10 @@ app.use(paymentRouter);
 app.use("/public/uploads", express.static("public/uploads"));
 
 // ✅ Serve React frontend
-app.use(express.static(path.join(__dirname, "../myreact-project/build")));
+app.use(express.static(path.join(__dirname, "../myreact-project/dist")));
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../myreact-project/build", "index.html"));
+  res.sendFile(path.join(__dirname, "../myreact-project/dist", "index.html"));
 });
 
 let port = process.env.PORT || 5000;
