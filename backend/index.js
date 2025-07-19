@@ -22,7 +22,10 @@ app.use(productRouter);
 app.use(userRouter);
 app.use(orderRouter);
 app.use(paymentRouter);
-app.use("/", express.static("public/uploads"));
+app.use(
+  "/public/uploads",
+  express.static(path.join(__dirname, "public/uploads"))
+);
 
 app.use(express.static(path.join(__dirname, "../myreact-project/dist")));
 
