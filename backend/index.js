@@ -25,7 +25,6 @@ app.use(orderRouter);
 app.use(paymentRouter);
 app.use("/public/uploads", express.static("public/uploads"));
 
-// ✅ Serve React frontend
 app.use(express.static(path.join(__dirname, "../myreact-project/dist")));
 
 app.get("*", (req, res) => {
