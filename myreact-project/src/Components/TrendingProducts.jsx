@@ -100,7 +100,7 @@ const TrendingProducts = () => {
                 <div className="relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
                   <img
-                    src={`${API}/${product.image}`}
+                    src={product.image}
                     alt={product.title}
                     className="w-full h-58 object-cover transform group-hover:scale-110 transition-transform duration-500"
                     loading="lazy"

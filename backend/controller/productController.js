@@ -3,9 +3,11 @@ const ProductModel = require("../models/productModel");
 const fs = require("fs");
 const orderModel = require("../models/orderModel");
 
-// Helper to build full image URL
+// Helper to build full image URL and ensure forward slashes
 const getFullImageUrl = (req, imagePath) => {
   if (!imagePath) return "";
+  // Replace backslashes with forward slashes for cross-platform compatibility
+  imagePath = imagePath.replace(/\\/g, "/");
   // Remove leading slash if present
   if (imagePath.startsWith("/")) imagePath = imagePath.slice(1);
   return `${req.protocol}://${req.get("host")}/${imagePath}`;
@@ -214,7 +216,13 @@ exports.getTrendingProducts = async (req, res) => {
       },
     ]);
 
-    res.status(200).json(trendingProducts);
+    // Ensure image URLs are full and use forward slashes
+    const trendingWithFullImage = trendingProducts.map((prod) => ({
+      ...prod,
+      image: prod.image ? getFullImageUrl(req, prod.image) : "",
+    }));
+
+    res.status(200).json(trendingWithFullImage);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch trending products" });
