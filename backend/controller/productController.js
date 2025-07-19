@@ -10,7 +10,9 @@ const getFullImageUrl = (req, imagePath) => {
   imagePath = imagePath.replace(/\\/g, "/");
   // Remove leading slash if present
   if (imagePath.startsWith("/")) imagePath = imagePath.slice(1);
-  return `${req.protocol}://${req.get("host")}/${imagePath}`;
+  // Use x-forwarded-proto if available (for proxies like Render, Heroku, etc.)
+  const proto = req.headers["x-forwarded-proto"] || req.protocol;
+  return `${proto}://${req.get("host")}/${imagePath}`;
 };
 
 exports.addProduct = async (req, res) => {
