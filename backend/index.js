@@ -36,5 +36,5 @@ app.get("*", (req, res) => {
 let port = process.env.PORT || 5000;
 
 app.listen(port, () => {
-  console.log("Server Started successfully at port " + port);
+  console.log("Serveer Started successfully at port " + port);
 });
