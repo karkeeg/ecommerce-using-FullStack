@@ -61,7 +61,7 @@ const LoginPage = () => {
         }
       }
     } catch (err) {
-      console.log("Login Error", err);
+      console.log("Login Errorr", err);
       setError("Something went wrong. Please try again.");
     }
 

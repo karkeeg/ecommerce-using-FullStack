@@ -13,7 +13,7 @@ const { isloggedIn, isAdmin } = require("../controller/userController");
 
 const router = require("express").Router();
 
-router.post("/placeorder", placeOrder);
+router.post("/placeorder", isloggedIn, placeOrder);
 router.get("/getallorder", getAllOrders);
 router.get("/getsingleorder/:id", getSingleOrder);
 router.get("/getorderbyuser/:id", isloggedIn, getAllOrderByUser);
