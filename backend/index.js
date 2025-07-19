@@ -8,12 +8,15 @@ const categoryRouter = require("./routes/categoryRoutes");
 const productRouter = require("./routes/productRoutes");
 const userRouter = require("./routes/userRoutes");
 const orderRouter = require("./routes/orderRoutes");
-const app = express();
 const paymentRouter = require("./routes/paymentRoutes");
+const path = require("path");
+
+const app = express();
 
 app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
+
 app.use(myrouter);
 app.use(categoryRouter);
 app.use(productRouter);
@@ -22,8 +25,15 @@ app.use(orderRouter);
 app.use(paymentRouter);
 app.use("/public/uploads", express.static("public/uploads"));
 
-let port = process.env.PORT;
+// ✅ Serve React frontend
+app.use(express.static(path.join(__dirname, "../myreact-project/build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../myreact-project/build", "index.html"));
+});
+
+let port = process.env.PORT || 5000;
 
 app.listen(port, () => {
-  console.log("Server Started succefully at port " + port);
+  console.log("Server Started successfully at port " + port);
 });
