@@ -20,7 +20,7 @@ exports.addProduct = async (req, res) => {
   res.send(productToAdd);
 };
 
-//get detail of aall products
+//get detail of aall product
 exports.getAllProduct = async (req, res) => {
   let product = await ProductModel.find().populate("category");
   if (!product) {
