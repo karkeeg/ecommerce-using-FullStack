@@ -1,8 +1,15 @@
 const { get } = require("mongoose");
 const ProductModel = require("../models/productModel");
-
 const fs = require("fs");
 const orderModel = require("../models/orderModel");
+
+// Helper to build full image URL
+const getFullImageUrl = (req, imagePath) => {
+  if (!imagePath) return "";
+  // Remove leading slash if present
+  if (imagePath.startsWith("/")) imagePath = imagePath.slice(1);
+  return `${req.protocol}://${req.get("host")}/${imagePath}`;
+};
 
 exports.addProduct = async (req, res) => {
   let productToAdd = await ProductModel.create({
@@ -17,36 +24,51 @@ exports.addProduct = async (req, res) => {
   if (!productToAdd) {
     return res.status(400).json({ error: "something went wrong" });
   }
-  res.send(productToAdd);
+  // Add full image URL
+  const productWithImage = {
+    ...productToAdd._doc,
+    product_image: getFullImageUrl(req, productToAdd.product_image),
+  };
+  res.send(productWithImage);
 };
 
-//get detail of aall product
+// Get all products
 exports.getAllProduct = async (req, res) => {
-  let product = await ProductModel.find().populate("category");
-  if (!product) {
+  let products = await ProductModel.find().populate("category");
+  if (!products) {
     return res.status(400).json({ error: "something went wrong" });
   }
-  res.send(product);
+  const productsWithFullImage = products.map((product) => ({
+    ...product._doc,
+    product_image: getFullImageUrl(req, product.product_image),
+  }));
+  res.send(productsWithFullImage);
 };
 
-//get product details
+// Get product details
 exports.getProductDetails = async (req, res) => {
   let product = await ProductModel.findById(req.params.id).populate("category");
   if (!product) {
     return res.status(400).json({ error: "Product not found" });
   }
-  res.send(product);
+  const productWithImage = {
+    ...product._doc,
+    product_image: getFullImageUrl(req, product.product_image),
+  };
+  res.send(productWithImage);
 };
 
-//get product by category
+// Get product by category
 exports.getProductByCategory = async (req, res) => {
-  let product = await ProductModel.find({ category: req.params.categoryId });
-
-  if (!product) {
+  let products = await ProductModel.find({ category: req.params.categoryId });
+  if (!products) {
     return res.status(400).json({ error: "Product not found" });
   }
-
-  res.send(product);
+  const productsWithFullImage = products.map((product) => ({
+    ...product._doc,
+    product_image: getFullImageUrl(req, product.product_image),
+  }));
+  res.send(productsWithFullImage);
 };
 
 //update product
@@ -78,7 +100,11 @@ exports.updateProduct = async (req, res) => {
   if (!productToUpdate) {
     return res.status(400).json({ error: " Something went wrong" });
   }
-  res.send(productToUpdate);
+  const updatedProductWithImage = {
+    ...productToUpdate._doc,
+    product_image: getFullImageUrl(req, productToUpdate.product_image),
+  };
+  res.send(updatedProductWithImage);
 };
 
 //deleting product
