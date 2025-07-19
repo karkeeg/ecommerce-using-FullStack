@@ -24,7 +24,7 @@ import UpdateCategory from "./Pages/admin/UpdateCategory";
 import AddProduct from "./Pages/admin/AddProduct";
 import UpdateProduct from "./Pages/admin/UpdateProduct";
 import UpdateUser from "./Pages/admin/UpdateUser";
-import AddUser from "./Pages/admin/AddUSer";
+import AddUser from "./Pages/admin/AddUser";
 import AddOrder from "./Pages/admin/AddOrder";
 import ProductPage from "./Pages/ProductPage";
 import ProductDetails from "./Pages/ProductDetails";
