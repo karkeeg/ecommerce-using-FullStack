@@ -20,7 +20,7 @@ async function sendEmail(mailOptions) {
     html: mailOptions.html, // HTML body
   });
 
-  console.log("Message sent:", info.messageId);
+  console.log("Message seent:", info.messageId);
 }
 
 module.exports = sendEmail;

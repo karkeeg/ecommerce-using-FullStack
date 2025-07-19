@@ -57,7 +57,7 @@ const ProductDetails = () => {
         {/* Image */}
         <div className="flex justify-center items-center">
           <img
-            src={`${API}/${product.product_image}`}
+            src={`{product.product_image}`}
             alt={product.product_name}
             onClick={() => setShowImageModal(true)}
             className="rounded-md max-h-72 object-contain w-full cursor-pointer hover:scale-105 transition"
