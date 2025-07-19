@@ -21,6 +21,6 @@ router.get("/getorderbyuser/:id", isloggedIn, getAllOrderByUser);
 router.delete("/deleteOrder/:id", deleteOrders);
 router.post("/updateorderstatus/:id", isAdmin, updateOrderStatus);
 router.post("/updateorder/:id", isAdmin, updateOrderById);
-router.post("/addorder/", isAdmin, addOrder);
+router.post("/addorder", isAdmin, addOrder);
 
 module.exports = router;
