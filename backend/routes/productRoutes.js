@@ -36,7 +36,12 @@ router.post(
 );
 router.get("/product", getAllProduct);
 router.get("/product/:id", getProductDetails);
-router.put("/product/:id", upload.single("product_image"), updateProduct);
+router.put(
+  "/product/:id",
+  upload.single("product_image"),
+  isAdmin,
+  updateProduct
+);
 router.delete("/product/:id", deleteProduct);
 
 //but its hard to do because end point will be diffcuult to remember

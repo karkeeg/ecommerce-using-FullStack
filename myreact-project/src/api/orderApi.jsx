@@ -84,7 +84,7 @@ export const addneworder = async (newOrder, token) => {
     return await res.json();
   } catch (error) {
     console.error(error);
-    return { error: "Failed to add new order" };
+    return { error: "Failed to add new order!" };
   }
 };
 

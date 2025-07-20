@@ -20,11 +20,12 @@ const {
   EsewaInitiatePayment,
   paymentStatus,
 } = require("../controller/EsewaController");
+const { isloggedIn } = require("../controller/userController");
 
-router.post("/esewa/create-payment", createPayment);
-router.get("/esewa/verify-payment", verifyPayment);
+router.post("/esewa/create-payment", isloggedIn, createPayment);
+router.get("/esewa/verify-payment", isloggedIn, verifyPayment);
 
-router.post("/initiate-payment", EsewaInitiatePayment);
-router.post("/payment-status", paymentStatus);
+router.post("/initiate-payment", isloggedIn, EsewaInitiatePayment);
+router.post("/payment-status", isloggedIn, paymentStatus);
 
 module.exports = router;
