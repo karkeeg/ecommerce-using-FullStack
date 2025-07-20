@@ -79,7 +79,7 @@ const Cart = () => {
                   <tr key={i} className="border-b hover:bg-gray-50 transition">
                     <td className="p-3">
                       <img
-                        src={`${API}/${item.product_image}`}
+                        src={item.product_image}
                         alt={item.product_name}
                         className="w-16 h-16 object-cover rounded-md"
                       />

@@ -29,7 +29,6 @@ const ProductPage = () => {
     });
   }, [filters]);
 
-  console.log("Image Address", `${API}/${products.product_image}`);
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4 md:px-10">
       <div className="flex flex-col md:flex-row gap-6">
@@ -57,7 +56,7 @@ const ProductPage = () => {
                   className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 p-5 flex flex-col"
                 >
                   <img
-                    src={`${API}/${product.product_image}`}
+                    src={product.product_image}
                     alt={product.product_name}
                     className="w-full h-52 object-cover rounded-lg mb-4"
                   />

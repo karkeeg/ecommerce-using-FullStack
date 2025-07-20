@@ -20,7 +20,7 @@ const CheckoutPage = () => {
     }
   );
 
-const totalPrice = cart_items.reduce(
+  const totalPrice = cart_items.reduce(
     (acc, item) => acc + item.product_price * item.quantity,
     0
   );
@@ -91,7 +91,7 @@ const totalPrice = cart_items.reduce(
                 <tr key={item.product_id} className="text-gray-600">
                   <td className="border px-4 py-2">
                     <img
-                      src={`${API}/${item.product_image}`}
+                      src={item.product_image}
                       alt={item.product_name}
                       className="w-14 h-14 object-cover rounded"
                     />

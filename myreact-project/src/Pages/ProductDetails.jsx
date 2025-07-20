@@ -57,7 +57,7 @@ const ProductDetails = () => {
         {/* Image */}
         <div className="flex justify-center items-center">
           <img
-            src={`{product.product_image}`}
+            src={product.product_image}
             alt={product.product_name}
             onClick={() => setShowImageModal(true)}
             className="rounded-md max-h-72 object-contain w-full cursor-pointer hover:scale-105 transition"
@@ -141,7 +141,7 @@ const ProductDetails = () => {
                 <Link to={`/products/${item._id}`} className="block">
                   <div className="aspect-[4/3] overflow-hidden rounded-md">
                     <img
-                      src={`${API}/${item.product_image}`}
+                      src={item.product_image}
                       alt={item.product_name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                     />

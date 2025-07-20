@@ -99,7 +99,7 @@ exports.verifyPayment = async (req, res) => {
     } else {
       return res.json({
         success: false,
-        message: `Payment ${data.status}`,
+        message: `Paymeent ${data.status}`,
         details: data,
       });
     }

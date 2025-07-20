@@ -138,7 +138,7 @@ const HeroCarousel = () => {
                         <div className="absolute inset-0 bg-gradient-to-r from-indigo-200 to-purple-200 rounded-3xl blur-2xl opacity-30 group-hover:opacity-50 transition-opacity duration-500 transform rotate-6"></div>
                         <div className="relative bg-white/50 backdrop-blur-sm rounded-3xl p-6 shadow-2xl border border-white/50">
                           <img
-                            src={`${API}/${product.product_image}`}
+                            src={product.product_image}
                             alt={product.product_name}
                             className="h-[50vh] md:h-[60vh] w-full object-contain transform group-hover:scale-105 rounded transition-transform duration-500"
                             loading="lazy"

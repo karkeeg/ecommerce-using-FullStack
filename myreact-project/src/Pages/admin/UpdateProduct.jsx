@@ -203,7 +203,7 @@ const UpdateProduct = () => {
 
         {/* Product Image */}
         <div>
-          <img src={`${API}/${formData.product_image}`} alt="" />
+          <img src={formData.product_image} alt="" />
           <label className="block font-medium text-gray-700 mb-1">
             Product Image
           </label>
