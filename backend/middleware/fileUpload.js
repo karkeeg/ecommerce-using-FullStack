@@ -1,24 +1,21 @@
 const multer = require("multer");
-const fs = require("fs");
-const path = require("path");
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    let filepath = "public/uploads";
-    if (!fs.existsSync(filepath)) {
-      fs.mkdirSync(filepath, { recursive: true });
-    }
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-    cb(null, filepath);
-  },
-  filename: function (req, file, cb) {
-    let extname = path.extname(file.originalname);
-    let basename = path.basename(file.originalname, extname);
-    // abc.jpeg : extname-> .jpeg  basename -> abc
-
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    let filename = file.fieldname + "-" + basename + extname;
-    cb(null, filename);
+// Configure Cloudinary storage
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "ecommerce-uploads",
+    allowed_formats: ["jpg", "jpeg", "png", "gif", "webp", "svg", "avif"],
+    transformation: [{ width: 1000, height: 1000, crop: "limit" }],
   },
 });
 

@@ -22,11 +22,8 @@ app.use(productRouter);
 app.use(userRouter);
 app.use(orderRouter);
 app.use(paymentRouter);
-app.use(
-  "/public/uploads",
-  express.static(path.join(__dirname, "public/uploads"))
-);
 
+// Serve React build files
 app.use(express.static(path.join(__dirname, "../myreact-project/dist")));
 
 app.get("*", (req, res) => {

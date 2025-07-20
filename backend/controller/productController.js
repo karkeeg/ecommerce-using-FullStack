@@ -1,18 +1,12 @@
 const { get } = require("mongoose");
 const ProductModel = require("../models/productModel");
-const fs = require("fs");
 const orderModel = require("../models/orderModel");
 
-// Helper to build full image URL and ensure forward slashes
+// Helper to build full image URL (now Cloudinary URLs are already full)
 const getFullImageUrl = (req, imagePath) => {
   if (!imagePath) return "";
-  // Replace backslashes with forward slashes for cross-platform compatibility
-  imagePath = imagePath.replace(/\\/g, "/");
-  // Remove leading slash if present
-  if (imagePath.startsWith("/")) imagePath = imagePath.slice(1);
-  // Use x-forwarded-proto if available (for proxies like Render, Heroku, etc.)
-  const proto = req.headers["x-forwarded-proto"] || req.protocol;
-  return `${proto}://${req.get("host")}/${imagePath}`;
+  // Cloudinary URLs are already full URLs, just ensure they're strings
+  return imagePath.toString();
 };
 
 exports.addProduct = async (req, res) => {
@@ -22,7 +16,7 @@ exports.addProduct = async (req, res) => {
     product_description: req.body.product_description,
     product_rating: req.body.product_rating,
     count_in_stock: req.body.count_in_stock,
-    product_image: req.file?.path,
+    product_image: req.file?.path, // This will be the Cloudinary URL
     category: req.body.category,
   });
   if (!productToAdd) {
@@ -77,15 +71,8 @@ exports.getProductByCategory = async (req, res) => {
 
 //update product
 exports.updateProduct = async (req, res) => {
-  if (req.file) {
-    let product = await ProductModel.findById(req.params.id);
-    if (!product) {
-      return res.json({ error: "Something went wrong" });
-    }
-    if (fs.existsSync(product.product_image)) {
-      fs.unlinkSync(product.product_image);
-    }
-  }
+  // Note: Cloudinary automatically handles old file deletion when you upload a new one
+  // No need to manually delete files
 
   let productToUpdate = await ProductModel.findByIdAndUpdate(
     req.params.id,
@@ -95,7 +82,7 @@ exports.updateProduct = async (req, res) => {
       product_description: req.body.product_description,
       product_rating: req.body.product_rating,
       count_in_stock: req.body.count_in_stock,
-      product_image: req.file?.path,
+      product_image: req.file?.path, // This will be the new Cloudinary URL
       category: req.body.category,
     },
     { new: true }
@@ -118,11 +105,8 @@ exports.deleteProduct = (req, res) => {
       if (!deleteProduct) {
         return res.status(400).json({ error: "Product Not Found" });
       } else {
-        if (deleteProduct.product_image) {
-          if (fs.existsSync(deleteProduct.product_image)) {
-            fs.unlinkSync(deleteProduct.product_image);
-          }
-        }
+        // Note: Cloudinary files are not automatically deleted when products are deleted
+        // You may want to implement manual deletion if needed
         return res.send({ message: "Product deleted successfully" });
       }
     })
