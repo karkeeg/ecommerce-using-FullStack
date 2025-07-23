@@ -21,17 +21,23 @@
 
 import { API } from "../constants";
 
-export const createEsewaPayment = (paymentData) => {
+export const createEsewaPayment = (paymentData, token) => {
   return fetch(`${API}/esewa/create-payment`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      ...(token && { Authorization: token }),
+    },
     body: JSON.stringify(paymentData),
   }).then((res) => res.json());
 };
 
-export const verifyEsewaPayment = (transaction_uuid, amount) => {
+export const verifyEsewaPayment = (transaction_uuid, amount, token) => {
   const params = new URLSearchParams({ transaction_uuid, amount });
-  return fetch(`${API}/esewa/verify-payment?${params.toString()}`).then((res) =>
-    res.json()
-  );
+  return fetch(`${API}/esewa/verify-payment?${params.toString()}`, {
+    method: "GET",
+    headers: {
+      ...(token && { Authorization: token }),
+    },
+  }).then((res) => res.json());
 };

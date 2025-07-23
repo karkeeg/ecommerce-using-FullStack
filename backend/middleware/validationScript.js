@@ -79,7 +79,7 @@ const userLoginCheck = [
     .notEmpty()
     .withMessage("Email is required")
     .isEmail()
-    .withMessage("Invalid email address")
+    .withMessage("Invalid emaiil address")
     .normalizeEmail(),
 
   check("password")

@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import { verifyEsewaPayment } from "../api/paymentApi";
 import { placeOrder } from "../api/orderApi";
 import { EmptyCart } from "../Components/redux/CartActions";
+import { isAuthenticated } from "../api/userApi";
 
 const OrderSuccess = () => {
   const location = useLocation();
@@ -31,7 +32,10 @@ const OrderSuccess = () => {
 
       const verifyRes = await verifyEsewaPayment(transaction_uuid, amount);
 
-      if (verifyRes.success && user) {
+      // Always get user and token from isAuthenticated (localStorage)
+      const { user, token } = isAuthenticated() || {};
+
+      if (verifyRes.success && user && token) {
         // 1. Place the order
         const orderData = {
           user: user._id,
@@ -41,7 +45,7 @@ const OrderSuccess = () => {
           transactionId: transaction_uuid,
         };
 
-        const res = await placeOrder(orderData, user.token);
+        const res = await placeOrder(orderData, token);
 
         if (res.success) {
           // 2. Empty cart
@@ -59,7 +63,7 @@ const OrderSuccess = () => {
     };
 
     handlePayment();
-  }, [location, dispatch, user, cart]);
+  }, [location, dispatch, cart]);
 
   if (loading) {
     return (

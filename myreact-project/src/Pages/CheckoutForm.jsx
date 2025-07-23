@@ -171,6 +171,7 @@
 
 import React from "react";
 import { createEsewaPayment } from "../api/paymentApi";
+import { isAuthenticated } from "../api/userApi";
 
 const CheckoutForm = () => {
   const payWithEsewa = async (e) => {
@@ -189,8 +190,12 @@ const CheckoutForm = () => {
       transaction_uuid,
     };
 
+    // Get token from localStorage
+    const { token } = isAuthenticated() || {};
+
     try {
-      const data = await createEsewaPayment(paymentData);
+      // Pass token to API
+      const data = await createEsewaPayment(paymentData, token);
 
       if (data.error) {
         alert(data.error);
