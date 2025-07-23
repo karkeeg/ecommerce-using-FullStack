@@ -36,6 +36,7 @@ const LoginPage = () => {
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
+  const token = JSON.parse(localStorage.getItem("login_token"))?.token;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,7 +46,7 @@ const LoginPage = () => {
     setError("");
 
     try {
-      const data = await login(formData); // Get token
+      const data = await login(formData, token); // Get token
       if (data?.error) {
         setError(data.error);
       } else {

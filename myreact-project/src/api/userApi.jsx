@@ -12,10 +12,11 @@ export const register = (user) => {
     .catch((error) => console.log(error));
 };
 
-export const login = (user) => {
+export const login = (user, token) => {
   return fetch(`${API}/login`, {
     method: "POST",
     headers: {
+      'Authorization': token,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(user),
