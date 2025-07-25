@@ -30,10 +30,15 @@ const OrderSuccess = () => {
       console.log("Parsed amount:", amount);
       console.log("transaction_uuid:", transaction_uuid);
 
-      const verifyRes = await verifyEsewaPayment(transaction_uuid, amount);
-
       // Always get user and token from isAuthenticated (localStorage)
       const { user, token } = isAuthenticated() || {};
+
+      // Pass token to verifyEsewaPayment
+      const verifyRes = await verifyEsewaPayment(
+        transaction_uuid,
+        amount,
+        token
+      );
 
       if (verifyRes.success && user && token) {
         // 1. Place the order
